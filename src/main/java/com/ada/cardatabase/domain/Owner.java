@@ -5,83 +5,77 @@
  */
 package com.ada.cardatabase.domain;
 
-import java.util.HashSet;
+
+
 import java.util.List;
-import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-/**
- *
- * @author vatra
- */
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+
+// happens on account of one-to-many relationship between the car and owner tables.
+//First, the car is serialized, and it contains an owner who is then serialized, and that, in turn, contains cars
+//that are then serialized and so on. To avoid this, we have to add the @JsonIgnore annotation to the cars 
+//field in the Owner class:
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Owner {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private long ownerid;
+	private String firstname, lastname;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="owner")
+        @JsonIgnore
+	private List<Car> cars;
+	
+	public Owner() {}
+	
+	public Owner(String firstname, String lastname) {
+		super();
+		this.firstname = firstname;
+		this.lastname = lastname;
+	}
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long ownerid;
-    private String firstName, lastName;
+	public List<Car> getCars() {
+		return cars;
+	}
+	
+	public void setCars(List<Car> cars) {
+		this.cars = cars;
+	}
+	
+	public long getOwnerid() {
+		return ownerid;
+	}
+	
+	public void setOwnerid(long ownerid) {
+		this.ownerid = ownerid;
+	}
+	
+	public String getFirstname() {
+		return firstname;
+	}
+	
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+	
+	public String getLastname() {
+		return lastname;
+	}
+	
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
 
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = "car_owner", joinColumns = {
-        @JoinColumn(name
-                = "ownerid")}, inverseJoinColumns = {
-        @JoinColumn(name = "id")})
-    private Set<Car> cars;
-
-    public Owner() {
-    }
-
-    public Owner(long ownerid, String firstName, String lastName, Set<Car> cars) {
-        this.ownerid = ownerid;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.cars = cars;
-    }
-
-    
-    
-   
-
-    public long getId() {
-        return ownerid;
-    }
-
-    public void setId(long ownerid) {
-        this.ownerid = ownerid;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setCars(Set<Car> cars) {
-        this.cars = cars;
-    }
-
-    public Set<Car> getCars() {
-        return cars;
-    }
-
-    
+	
+	
 }
