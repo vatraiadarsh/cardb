@@ -6,9 +6,11 @@
 package com.ada.cardatabase.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -16,17 +18,21 @@ import javax.persistence.Id;
  */
 @Entity
 public class Car {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String brand,model,color,registerNumber;
-    private int year,price;
+    private String brand, model, color, registerNumber;
+    private int year, price;
+//     the lazy strategy means that when the owner is fetched from the database, all the cars associated with the 
+//    owner will be fetched when needed. Eager means that the cars will be fetched immediately with the owner. 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Owner owner;
 
     public Car() {
     }
 
-    public Car(long id, String brand, String model, String color, String registerNumber, int year, int price) {
+    public Car(long id, String brand, String model, String color, String registerNumber, int year, int price, Owner owner) {
         this.id = id;
         this.brand = brand;
         this.model = model;
@@ -34,7 +40,10 @@ public class Car {
         this.registerNumber = registerNumber;
         this.year = year;
         this.price = price;
+        this.owner = owner;
     }
+
+   
 
     public long getId() {
         return id;
@@ -91,6 +100,15 @@ public class Car {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
     
     
+
 }
