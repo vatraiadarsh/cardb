@@ -5,11 +5,13 @@
  */
 package com.ada.cardatabase.domain;
 
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 /**
@@ -24,15 +26,14 @@ public class Car {
     private long id;
     private String brand, model, color, registerNumber;
     private int year, price;
-//     the lazy strategy means that when the owner is fetched from the database, all the cars associated with the 
-//    owner will be fetched when needed. Eager means that the cars will be fetched immediately with the owner. 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Owner owner;
+//    we use set for many to many relationship
+    @ManyToMany(mappedBy = "cars")
+    private Set<Owner> owners;
 
     public Car() {
     }
 
-    public Car(long id, String brand, String model, String color, String registerNumber, int year, int price, Owner owner) {
+    public Car(long id, String brand, String model, String color, String registerNumber, int year, int price, Set<Owner> owners) {
         this.id = id;
         this.brand = brand;
         this.model = model;
@@ -40,8 +41,10 @@ public class Car {
         this.registerNumber = registerNumber;
         this.year = year;
         this.price = price;
-        this.owner = owner;
+        this.owners = owners;
     }
+
+   
 
    
 
@@ -101,13 +104,15 @@ public class Car {
         this.price = price;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public Set<Owner> getOwners() {
+        return owners;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public void setOwners(Set<Owner> owners) {
+        this.owners = owners;
     }
+
+   
     
     
 

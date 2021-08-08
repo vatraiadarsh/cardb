@@ -5,12 +5,17 @@
  */
 package com.ada.cardatabase.domain;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 /**
@@ -19,31 +24,39 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class Owner {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-    private String firstName,lastName;
-//    The @OneToMany annotation has two attributes that we are using. The cascade attribute defines how cascading 
-//    affects the entities. The ALL attribute setting means that, if the owner is deleted, the cars linked to that
-//    owner are deleted as well. The mappedBy="owner" attribute setting tells us that the Car class has the owner field, which is the foreign key for this relationship.
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "owner")
-    private List<Car> cars;
+    private long ownerid;
+    private String firstName, lastName;
+
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "car_owner", joinColumns = {
+        @JoinColumn(name
+                = "ownerid")}, inverseJoinColumns = {
+        @JoinColumn(name = "id")})
+    private Set<Car> cars;
 
     public Owner() {
     }
 
-    public Owner(long id, String firstName, String lastName) {
-        this.id = id;
+    public Owner(long ownerid, String firstName, String lastName, Set<Car> cars) {
+        this.ownerid = ownerid;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.cars = cars;
     }
+
+    
+    
+   
 
     public long getId() {
-        return id;
+        return ownerid;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setId(long ownerid) {
+        this.ownerid = ownerid;
     }
 
     public String getFirstName() {
@@ -61,6 +74,14 @@ public class Owner {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    
+
+    public void setCars(Set<Car> cars) {
+        this.cars = cars;
+    }
+
+    public Set<Car> getCars() {
+        return cars;
+    }
+
     
 }
